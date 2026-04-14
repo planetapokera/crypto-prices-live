@@ -2,59 +2,23 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Crypto Prices Live — биткоин, эфир, TON, доллар, рубль каждую минуту</title>
-<meta name="description" content="Сеть из 6 Telegram-каналов с минутным обновлением цен. BTC/USDT, BTC/USD, BTC/RUB, TON/USDT, WLD/USDT, USD/RUB. Источники: Binance, Coinbase, MOEX."/>
-<link rel="canonical" href="https://planetapokera.github.io/crypto-prices-live/"/>
-<style>
-:root{--bg:#0b1220;--fg:#e8eef9;--muted:#8fa3c2;--accent:#3ecf8e;--card:#141c32}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
-.wrap{max-width:820px;margin:0 auto;padding:32px 20px 80px}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px}
-header a{color:var(--muted);text-decoration:none;font-size:14px}
-header a:hover{color:var(--fg)}
-h1{font-size:26px;line-height:1.25;margin:0 0 12px}
-h2{font-size:20px;margin:28px 0 12px}
-.price-card{background:linear-gradient(135deg,#1a2647,#121b33);padding:24px;border-radius:14px;margin:20px 0;border:1px solid #243356}
-.price{font-size:40px;font-weight:700;color:var(--accent);margin:8px 0}
-.price small{color:var(--muted);font-size:14px;font-weight:400;margin-left:8px}
-.meta{color:var(--muted);font-size:13px;margin-top:4px}
-.cta{display:inline-block;background:var(--accent);color:#06241a;padding:14px 22px;border-radius:10px;font-weight:700;text-decoration:none;margin:14px 0}
-.cta:hover{filter:brightness(1.08)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:20px 0}
-.grid a{display:block;background:var(--card);color:var(--fg);padding:14px;border-radius:10px;text-decoration:none;border:1px solid #243356}
-.grid a:hover{border-color:var(--accent)}
-.grid strong{display:block;color:var(--accent)}
-.grid span{color:var(--muted);font-size:13px}
-p{color:#c9d4e9}
-ul{color:#c9d4e9}
-code{background:#121b33;padding:2px 6px;border-radius:4px}
-footer{margin-top:50px;padding-top:24px;border-top:1px solid #243356;color:var(--muted);font-size:13px}
-footer a{color:var(--muted)}
-</style>
+<title>Crypto Prices Live</title>
+<meta name="description" content="Crypto & FX prices every minute in Telegram — 6 channels, 9 languages."/>
+<link rel="canonical" href="https://planetapokera.github.io/crypto-prices-live/ru/"/>
+<meta http-equiv="refresh" content="0; url=/crypto-prices-live/ru/"/>
+<script>
+(function(){
+  var supported = ["ru", "en", "es", "tr", "pt", "id", "hi", "ar", "zh"];
+  var pref = (navigator.language||'en').toLowerCase();
+  var target = 'ru';
+  for (var i=0;i<supported.length;i++) {
+    if (pref.indexOf(supported[i]) === 0) { target = supported[i]; break; }
+  }
+  location.replace('/crypto-prices-live/' + target + '/');
+})();
+</script>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <strong>Crypto Prices Live</strong>
-    <a href="https://github.com/planetapokera/crypto-prices-live">GitHub</a>
-  </header>
-  <h1>Курсы крипты и валют каждую минуту прямо в Telegram</h1>
-  <p>Сеть из 6 независимых каналов. Каждый публикует свежий курс своей пары раз в минуту. Источники: Binance spot, Coinbase, Московская биржа. Snapshot обновлён: 2026-04-14 20:26 UTC.</p>
-  <div class="grid">
-    <a href="/crypto-prices-live/btc-usdt/"><strong>BTC/USDT</strong><span>74 176.34 USDT · @btcusdtpriced</span></a><a href="/crypto-prices-live/btc-usd/"><strong>BTC/USD</strong><span>74 217.01 USD · @btcusdprice</span></a><a href="/crypto-prices-live/btc-rub/"><strong>BTC/RUB</strong><span>5 551 913.61 RUB · @btcrubprice</span></a><a href="/crypto-prices-live/ton-usdt/"><strong>TON/USDT</strong><span>1.3720 USDT · @tonusdprice</span></a><a href="/crypto-prices-live/wld-usdt/"><strong>WLD/USDT</strong><span>0.295400 USDT · @wldusdprice</span></a><a href="/crypto-prices-live/usd-rub/"><strong>USD/RUB</strong><span>74.847 RUB · @usdrubprice</span></a>
-  </div>
-  <h2>Как это работает</h2>
-  <ul>
-    <li>Каждый канал — один бот-тикер, работающий на отдельном сервере.</li>
-    <li>Цена тянется напрямую с биржевого API (Binance, Coinbase, MOEX).</li>
-    <li>Публикация — каждые 60 секунд, в беззвучном режиме (без push-уведомлений).</li>
-    <li>Посты можно листать как историю цены.</li>
-  </ul>
-  <footer>
-    Open source on <a href="https://github.com/planetapokera/crypto-prices-live">GitHub</a>. Цены не являются финансовой рекомендацией.
-  </footer>
-</div>
+<p>Redirecting to <a href="/crypto-prices-live/ru/">/ru/</a>…</p>
 </body>
 </html>
