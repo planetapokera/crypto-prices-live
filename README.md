@@ -14,11 +14,13 @@
 - **9 языков** (переводы руками): ru, en, es, tr, pt, id, hi, ar, zh.
   - Arabic — RTL (`dir="rtl"`).
   - Каждая языковая группа связана через `<link rel="alternate" hreflang="...">`, плюс `x-default` → `ru`.
-  - Переключатель языков в `<header>` каждой страницы.
+  - Переключатель языков в `<header>` каждой страницы. Так как keyword-слаги разные между языками (русские slug'и кириллица в транслите, арабские — `sir-ton-usdt-mubashir` и т.п.), переключение с keyword-страницы на другой язык ведёт на pair-index этого языка (`/<lg>/<pair>/`), а не на несуществующий slug.
 - **SEO-обвес на каждой странице**:
-  - `<title>`, meta description, canonical, OpenGraph, Twitter card.
-  - JSON-LD `ExchangeRateSpecification` + `FAQPage`.
+  - `<title>`, уникальный `meta description` (включает конкретный ключ), canonical, OpenGraph, Twitter card.
+  - JSON-LD `ExchangeRateSpecification` + `FAQPage` + `BreadcrumbList`.
+  - Блок «Related searches / Похожие запросы» — внутренние ссылки на 9 остальных keyword-страниц той же пары в том же языке (усиление internal linking).
   - `yandex-verification` + `google-site-verification` (на всех страницах, включая корневой редирект).
+- **Custom 404** с JS-fallback: если пользователь попал на несуществующий slug (например перевёл английский slug на AR-путь), редиректит на ближайший валидный URL `/<lang>/<pair>/`.
 - **Интерактивный конвертер валют** — JS-виджет на каждой keyword-странице и pair-индексе. Двунаправленное преобразование, кнопка swap. Курс берётся из snapshot страницы.
 - **Контент**: 2 абзаца про пару + FAQ (4 вопроса) + сетка кросс-линков на остальные 5 каналов + live-цена из snapshot.
 - **sitemap.xml** + **robots.txt** + IndexNow key-файл (`c9f1a8b7d6e5c4b3a2918273645f0e9d.txt`).
