@@ -140,8 +140,21 @@ p{color:#c9d4e9}
 ul{color:#c9d4e9}
 footer{margin-top:50px;padding-top:24px;border-top:1px solid #243356;color:var(--muted);font-size:13px}
 footer a{color:var(--muted)}
+.calc{background:var(--card);border:1px solid #243356;border-radius:12px;padding:18px;margin:20px 0}
+.calc .row{display:flex;gap:8px;align-items:stretch;margin:8px 0;flex-wrap:wrap}
+.calc input{flex:1;min-width:140px;background:#0b1220;border:1px solid #243356;color:var(--fg);padding:10px 12px;border-radius:8px;font-size:16px;font-family:inherit}
+.calc input:focus{outline:none;border-color:var(--accent)}
+.calc .ccy{min-width:70px;padding:10px 12px;background:#0b1220;border:1px solid #243356;border-radius:8px;color:var(--muted);font-weight:600;display:flex;align-items:center;justify-content:center}
+.calc button{background:transparent;border:1px solid #243356;color:var(--muted);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px}
+.calc button:hover{border-color:var(--accent);color:var(--fg)}
+.calc .rate{color:var(--muted);font-size:13px;margin-top:10px}
 [dir="rtl"] .grid strong,[dir="rtl"] .price small{direction:rtl}
 """
+
+VERIFY_META = (
+    '<meta name="yandex-verification" content="1edba899112310f3"/>\n'
+    '<meta name="google-site-verification" content="OI8q2vN1dp3ChHueOuCCzlqUxtmBmFcApUMo30wDKno"/>'
+)
 
 
 # ---------- templates ----------
@@ -293,6 +306,7 @@ def page_html(lang: str, pair: Pair, kw_slug: str, kw: str,
 <meta property="og:type" content="website"/>
 <meta name="twitter:card" content="summary"/>
 <meta name="theme-color" content="#0b1220"/>
+{VERIFY_META}
 <script type="application/ld+json">{json.dumps(json_ld_rate, ensure_ascii=False)}</script>
 <script type="application/ld+json">{json.dumps(json_ld_faq, ensure_ascii=False)}</script>
 <style>{BASE_CSS}</style>
@@ -314,6 +328,55 @@ def page_html(lang: str, pair: Pair, kw_slug: str, kw: str,
     <div class="meta">{ui['snapshot_at']} {ts} · {ui['refreshed']}</div>
     <a class="cta" href="{tg_url}">{ui['view_each_minute']} → {pair.channel}</a>
   </div>
+
+  <h2>{ui['calc_title'].format(label=pair.label)}</h2>
+  <div class="calc" data-rate="{price if price is not None else 0}" data-base="{pair.base}" data-quote="{pair.quote}">
+    <div class="row">
+      <input type="number" inputmode="decimal" step="any" class="calc-from" value="1" aria-label="{ui['calc_amount']}"/>
+      <div class="ccy">{pair.base}</div>
+    </div>
+    <div class="row">
+      <input type="number" inputmode="decimal" step="any" class="calc-to" aria-label="{ui['calc_result']}"/>
+      <div class="ccy">{pair.quote}</div>
+      <button type="button" class="calc-swap">⇅ {ui['calc_swap']}</button>
+    </div>
+    <div class="rate">{ui['calc_rate_line'].format(base=pair.base, price=price_str, quote=pair.quote)}</div>
+  </div>
+  <script>
+  (function(){{
+    document.querySelectorAll('.calc').forEach(function(root){{
+      if(root._init) return; root._init = true;
+      var rate = parseFloat(root.dataset.rate) || 0;
+      var base = root.dataset.base, quote = root.dataset.quote;
+      var fromEl = root.querySelector('.calc-from');
+      var toEl   = root.querySelector('.calc-to');
+      var ccyFrom = root.querySelectorAll('.ccy')[0];
+      var ccyTo   = root.querySelectorAll('.ccy')[1];
+      var swapBtn = root.querySelector('.calc-swap');
+      var inverted = false;
+      function fmt(n){{
+        if(!isFinite(n)) return '';
+        if(Math.abs(n)>=1000) return n.toLocaleString('en-US',{{maximumFractionDigits:2}}).replace(/,/g,' ');
+        if(Math.abs(n)>=1)    return n.toLocaleString('en-US',{{maximumFractionDigits:4}});
+        return n.toLocaleString('en-US',{{maximumFractionDigits:8}});
+      }}
+      function recalc(src){{
+        var r = inverted ? (rate>0?1/rate:0) : rate;
+        if(src==='to'){{ var v=parseFloat(toEl.value); fromEl.value = fmt(v/(r||1)); }}
+        else           {{ var v=parseFloat(fromEl.value); toEl.value = fmt(v*r); }}
+      }}
+      fromEl.addEventListener('input', function(){{recalc('from');}});
+      toEl.addEventListener('input',   function(){{recalc('to');}});
+      swapBtn.addEventListener('click', function(){{
+        inverted = !inverted;
+        ccyFrom.textContent = inverted ? quote : base;
+        ccyTo.textContent   = inverted ? base  : quote;
+        recalc('from');
+      }});
+      recalc('from');
+    }});
+  }})();
+  </script>
 
   <h2>{ctx_h2}</h2>
   <p>{ctx_p1}</p>
@@ -368,6 +431,7 @@ def home_html(lang: str, prices: dict[str, float]) -> str:
 {hreflang}
 <meta property="og:title" content="{ui['home_title']}"/>
 <meta property="og:description" content="{ui['home_desc']}"/>
+{VERIFY_META}
 <style>{BASE_CSS}</style>
 </head>
 <body>
@@ -400,6 +464,7 @@ def root_redirect_html() -> str:
 <title>Crypto Prices Live</title>
 <meta name="description" content="Crypto & FX prices every minute in Telegram — 6 channels, 9 languages."/>
 <link rel="canonical" href="{DOMAIN}/{DEFAULT_LANG}/"/>
+{VERIFY_META}
 <meta http-equiv="refresh" content="0; url=/crypto-prices-live/{DEFAULT_LANG}/"/>
 <script>
 (function(){{

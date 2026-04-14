@@ -23,6 +23,8 @@
 <meta property="og:type" content="website"/>
 <meta name="twitter:card" content="summary"/>
 <meta name="theme-color" content="#0b1220"/>
+<meta name="yandex-verification" content="1edba899112310f3"/>
+<meta name="google-site-verification" content="OI8q2vN1dp3ChHueOuCCzlqUxtmBmFcApUMo30wDKno"/>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "ExchangeRateSpecification", "currency": "USD", "currentExchangeRate": {"@type": "UnitPriceSpecification", "price": 74.8475, "priceCurrency": "RUB"}, "name": "USD/RUB live exchange rate", "url": "https://planetapokera.github.io/crypto-prices-live/hi/usd-rub/usd-rub-telegram-channel/"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "कीमत कितनी बार अपडेट होती है?", "acceptedAnswer": {"@type": "Answer", "text": "@usdrubprice चैनल में — हर मिनट। इस पेज पर — GitHub Actions के ज़रिये घंटे में एक बार। रियल-टाइम के लिए Telegram चैनल का इस्तेमाल करें।"}}, {"@type": "Question", "name": "कीमत कहाँ से आती है?", "acceptedAnswer": {"@type": "Answer", "text": "स्रोत: MOEX USD000UTSTOM।"}}, {"@type": "Question", "name": "क्या यह मुफ़्त है?", "acceptedAnswer": {"@type": "Answer", "text": "हाँ, चैनल सब्सक्रिप्शन और यह पेज पूरी तरह मुफ़्त हैं।"}}, {"@type": "Question", "name": "क्या नोटिफिकेशन आते हैं?", "acceptedAnswer": {"@type": "Answer", "text": "पोस्ट साइलेंट मोड में जाते हैं — पुश नहीं आता। मौजूदा भाव देखने के लिए चैनल खोलें।"}}]}</script>
 <style>
@@ -54,6 +56,14 @@ p{color:#c9d4e9}
 ul{color:#c9d4e9}
 footer{margin-top:50px;padding-top:24px;border-top:1px solid #243356;color:var(--muted);font-size:13px}
 footer a{color:var(--muted)}
+.calc{background:var(--card);border:1px solid #243356;border-radius:12px;padding:18px;margin:20px 0}
+.calc .row{display:flex;gap:8px;align-items:stretch;margin:8px 0;flex-wrap:wrap}
+.calc input{flex:1;min-width:140px;background:#0b1220;border:1px solid #243356;color:var(--fg);padding:10px 12px;border-radius:8px;font-size:16px;font-family:inherit}
+.calc input:focus{outline:none;border-color:var(--accent)}
+.calc .ccy{min-width:70px;padding:10px 12px;background:#0b1220;border:1px solid #243356;border-radius:8px;color:var(--muted);font-weight:600;display:flex;align-items:center;justify-content:center}
+.calc button{background:transparent;border:1px solid #243356;color:var(--muted);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px}
+.calc button:hover{border-color:var(--accent);color:var(--fg)}
+.calc .rate{color:var(--muted);font-size:13px;margin-top:10px}
 [dir="rtl"] .grid strong,[dir="rtl"] .price small{direction:rtl}
 </style>
 </head>
@@ -71,16 +81,65 @@ footer a{color:var(--muted)}
   <div class="price-card">
     <div class="meta">USD/RUB · स्रोत: MOEX USD000UTSTOM</div>
     <div class="price">74.847 <small>RUB</small></div>
-    <div class="meta">स्नैपशॉट — 2026-04-14 20:54 UTC · GitHub Actions द्वारा घंटे में एक बार रिफ़्रेश</div>
+    <div class="meta">स्नैपशॉट — 2026-04-14 20:56 UTC · GitHub Actions द्वारा घंटे में एक बार रिफ़्रेश</div>
     <a class="cta" href="https://t.me/usdrubprice">हर मिनट कीमत देखें → @usdrubprice</a>
   </div>
+
+  <h2>USD/RUB कन्वर्टर</h2>
+  <div class="calc" data-rate="74.8475" data-base="USD" data-quote="RUB">
+    <div class="row">
+      <input type="number" inputmode="decimal" step="any" class="calc-from" value="1" aria-label="राशि"/>
+      <div class="ccy">USD</div>
+    </div>
+    <div class="row">
+      <input type="number" inputmode="decimal" step="any" class="calc-to" aria-label="बराबर"/>
+      <div class="ccy">RUB</div>
+      <button type="button" class="calc-swap">⇅ उलटें</button>
+    </div>
+    <div class="rate">दर 1 USD = 74.847 RUB</div>
+  </div>
+  <script>
+  (function(){
+    document.querySelectorAll('.calc').forEach(function(root){
+      if(root._init) return; root._init = true;
+      var rate = parseFloat(root.dataset.rate) || 0;
+      var base = root.dataset.base, quote = root.dataset.quote;
+      var fromEl = root.querySelector('.calc-from');
+      var toEl   = root.querySelector('.calc-to');
+      var ccyFrom = root.querySelectorAll('.ccy')[0];
+      var ccyTo   = root.querySelectorAll('.ccy')[1];
+      var swapBtn = root.querySelector('.calc-swap');
+      var inverted = false;
+      function fmt(n){
+        if(!isFinite(n)) return '';
+        if(Math.abs(n)>=1000) return n.toLocaleString('en-US',{maximumFractionDigits:2}).replace(/,/g,' ');
+        if(Math.abs(n)>=1)    return n.toLocaleString('en-US',{maximumFractionDigits:4});
+        return n.toLocaleString('en-US',{maximumFractionDigits:8});
+      }
+      function recalc(src){
+        var r = inverted ? (rate>0?1/rate:0) : rate;
+        if(src==='to'){ var v=parseFloat(toEl.value); fromEl.value = fmt(v/(r||1)); }
+        else           { var v=parseFloat(fromEl.value); toEl.value = fmt(v*r); }
+      }
+      fromEl.addEventListener('input', function(){recalc('from');});
+      toEl.addEventListener('input',   function(){recalc('to');});
+      swapBtn.addEventListener('click', function(){
+        inverted = !inverted;
+        ccyFrom.textContent = inverted ? quote : base;
+        ccyTo.textContent   = inverted ? base  : quote;
+        recalc('from');
+      });
+      recalc('from');
+    });
+  })();
+  </script>
 
   <h2>मॉस्को एक्सचेंज पर USD/RUB</h2>
   <p>USD000UTSTOM TOM निपटान वाला USD कॉन्ट्रैक्ट है, MOEX करेंसी सेक्शन में। ट्रेडिंग सोम–शुक्र 10:00–23:50 मॉस्को समय।</p>
   <p>यह एक्सचेंज रेट है — रूस के सेंट्रल बैंक संदर्भ रेट, बैंक रेट्स (1-3% मार्जिन) और एक्सचेंज (बड़ा मार्जिन) का आधार।</p>
 
   <h2>अन्य जोड़े</h2>
-  <div class="grid"><a href="/crypto-prices-live/hi/btc-usdt/"><strong>BTC/USDT</strong><span>74 141.58 · @btcusdtpriced</span></a><a href="/crypto-prices-live/hi/btc-usd/"><strong>BTC/USD</strong><span>74 201.01 · @btcusdprice</span></a><a href="/crypto-prices-live/hi/btc-rub/"><strong>BTC/RUB</strong><span>5 549 311.91 · @btcrubprice</span></a><a href="/crypto-prices-live/hi/ton-usdt/"><strong>TON/USDT</strong><span>1.3760 · @tonusdprice</span></a><a href="/crypto-prices-live/hi/wld-usdt/"><strong>WLD/USDT</strong><span>0.295700 · @wldusdprice</span></a></div>
+  <div class="grid"><a href="/crypto-prices-live/hi/btc-usdt/"><strong>BTC/USDT</strong><span>74 151.77 · @btcusdtpriced</span></a><a href="/crypto-prices-live/hi/btc-usd/"><strong>BTC/USD</strong><span>74 201.93 · @btcusdprice</span></a><a href="/crypto-prices-live/hi/btc-rub/"><strong>BTC/RUB</strong><span>5 550 074.61 · @btcrubprice</span></a><a href="/crypto-prices-live/hi/ton-usdt/"><strong>TON/USDT</strong><span>1.3760 · @tonusdprice</span></a><a href="/crypto-prices-live/hi/wld-usdt/"><strong>WLD/USDT</strong><span>0.295700 · @wldusdprice</span></a></div>
 
   <h2>अक्सर पूछे जाने वाले प्रश्न</h2>
   <h3>कीमत कितनी बार अपडेट होती है?</h3>

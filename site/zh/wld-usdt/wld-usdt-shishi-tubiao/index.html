@@ -23,6 +23,8 @@
 <meta property="og:type" content="website"/>
 <meta name="twitter:card" content="summary"/>
 <meta name="theme-color" content="#0b1220"/>
+<meta name="yandex-verification" content="1edba899112310f3"/>
+<meta name="google-site-verification" content="OI8q2vN1dp3ChHueOuCCzlqUxtmBmFcApUMo30wDKno"/>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "ExchangeRateSpecification", "currency": "WLD", "currentExchangeRate": {"@type": "UnitPriceSpecification", "price": 0.2957, "priceCurrency": "USDT"}, "name": "WLD/USDT live exchange rate", "url": "https://planetapokera.github.io/crypto-prices-live/zh/wld-usdt/wld-usdt-shishi-tubiao/"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "价格多久更新一次？", "acceptedAnswer": {"@type": "Answer", "text": "在频道 @wldusdprice 中 — 每分钟更新。此页面 — 通过 GitHub Actions 每小时更新一次。实时请使用 Telegram 频道。"}}, {"@type": "Question", "name": "价格来自哪里？", "acceptedAnswer": {"@type": "Answer", "text": "来源：Binance spot。"}}, {"@type": "Question", "name": "免费吗？", "acceptedAnswer": {"@type": "Answer", "text": "是的，Telegram 订阅和本页面完全免费。"}}, {"@type": "Question", "name": "有通知吗？", "acceptedAnswer": {"@type": "Answer", "text": "发布为静音模式 — 没有推送通知。打开频道即可查看当前价格。"}}]}</script>
 <style>
@@ -54,6 +56,14 @@ p{color:#c9d4e9}
 ul{color:#c9d4e9}
 footer{margin-top:50px;padding-top:24px;border-top:1px solid #243356;color:var(--muted);font-size:13px}
 footer a{color:var(--muted)}
+.calc{background:var(--card);border:1px solid #243356;border-radius:12px;padding:18px;margin:20px 0}
+.calc .row{display:flex;gap:8px;align-items:stretch;margin:8px 0;flex-wrap:wrap}
+.calc input{flex:1;min-width:140px;background:#0b1220;border:1px solid #243356;color:var(--fg);padding:10px 12px;border-radius:8px;font-size:16px;font-family:inherit}
+.calc input:focus{outline:none;border-color:var(--accent)}
+.calc .ccy{min-width:70px;padding:10px 12px;background:#0b1220;border:1px solid #243356;border-radius:8px;color:var(--muted);font-weight:600;display:flex;align-items:center;justify-content:center}
+.calc button{background:transparent;border:1px solid #243356;color:var(--muted);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px}
+.calc button:hover{border-color:var(--accent);color:var(--fg)}
+.calc .rate{color:var(--muted);font-size:13px;margin-top:10px}
 [dir="rtl"] .grid strong,[dir="rtl"] .price small{direction:rtl}
 </style>
 </head>
@@ -71,16 +81,65 @@ footer a{color:var(--muted)}
   <div class="price-card">
     <div class="meta">WLD/USDT · 来源: Binance spot</div>
     <div class="price">0.295700 <small>USDT</small></div>
-    <div class="meta">快照时间 2026-04-14 20:54 UTC · 由 GitHub Actions 每小时刷新</div>
+    <div class="meta">快照时间 2026-04-14 20:56 UTC · 由 GitHub Actions 每小时刷新</div>
     <a class="cta" href="https://t.me/wldusdprice">每分钟查看价格 → @wldusdprice</a>
   </div>
+
+  <h2>WLD/USDT 转换器</h2>
+  <div class="calc" data-rate="0.2957" data-base="WLD" data-quote="USDT">
+    <div class="row">
+      <input type="number" inputmode="decimal" step="any" class="calc-from" value="1" aria-label="数量"/>
+      <div class="ccy">WLD</div>
+    </div>
+    <div class="row">
+      <input type="number" inputmode="decimal" step="any" class="calc-to" aria-label="等于"/>
+      <div class="ccy">USDT</div>
+      <button type="button" class="calc-swap">⇅ 交换</button>
+    </div>
+    <div class="rate">汇率 1 WLD = 0.295700 USDT</div>
+  </div>
+  <script>
+  (function(){
+    document.querySelectorAll('.calc').forEach(function(root){
+      if(root._init) return; root._init = true;
+      var rate = parseFloat(root.dataset.rate) || 0;
+      var base = root.dataset.base, quote = root.dataset.quote;
+      var fromEl = root.querySelector('.calc-from');
+      var toEl   = root.querySelector('.calc-to');
+      var ccyFrom = root.querySelectorAll('.ccy')[0];
+      var ccyTo   = root.querySelectorAll('.ccy')[1];
+      var swapBtn = root.querySelector('.calc-swap');
+      var inverted = false;
+      function fmt(n){
+        if(!isFinite(n)) return '';
+        if(Math.abs(n)>=1000) return n.toLocaleString('en-US',{maximumFractionDigits:2}).replace(/,/g,' ');
+        if(Math.abs(n)>=1)    return n.toLocaleString('en-US',{maximumFractionDigits:4});
+        return n.toLocaleString('en-US',{maximumFractionDigits:8});
+      }
+      function recalc(src){
+        var r = inverted ? (rate>0?1/rate:0) : rate;
+        if(src==='to'){ var v=parseFloat(toEl.value); fromEl.value = fmt(v/(r||1)); }
+        else           { var v=parseFloat(fromEl.value); toEl.value = fmt(v*r); }
+      }
+      fromEl.addEventListener('input', function(){recalc('from');});
+      toEl.addEventListener('input',   function(){recalc('to');});
+      swapBtn.addEventListener('click', function(){
+        inverted = !inverted;
+        ccyFrom.textContent = inverted ? quote : base;
+        ccyTo.textContent   = inverted ? base  : quote;
+        recalc('from');
+      });
+      recalc('from');
+    });
+  })();
+  </script>
 
   <h2>WLD（Worldcoin）——World ID 项目的代币</h2>
   <p>Worldcoin 是 Sam Altman 的项目，向通过 Orb 设备完成生物识别验证的人发放 WLD。目的：AI 机器人时代的人性证明。</p>
   <p>WLD/USDT 来自 Binance 现货——Worldcoin 的主要流动市场。</p>
 
   <h2>其他交易对</h2>
-  <div class="grid"><a href="/crypto-prices-live/zh/btc-usdt/"><strong>BTC/USDT</strong><span>74 141.58 · @btcusdtpriced</span></a><a href="/crypto-prices-live/zh/btc-usd/"><strong>BTC/USD</strong><span>74 201.01 · @btcusdprice</span></a><a href="/crypto-prices-live/zh/btc-rub/"><strong>BTC/RUB</strong><span>5 549 311.91 · @btcrubprice</span></a><a href="/crypto-prices-live/zh/ton-usdt/"><strong>TON/USDT</strong><span>1.3760 · @tonusdprice</span></a><a href="/crypto-prices-live/zh/usd-rub/"><strong>USD/RUB</strong><span>74.847 · @usdrubprice</span></a></div>
+  <div class="grid"><a href="/crypto-prices-live/zh/btc-usdt/"><strong>BTC/USDT</strong><span>74 151.77 · @btcusdtpriced</span></a><a href="/crypto-prices-live/zh/btc-usd/"><strong>BTC/USD</strong><span>74 201.93 · @btcusdprice</span></a><a href="/crypto-prices-live/zh/btc-rub/"><strong>BTC/RUB</strong><span>5 550 074.61 · @btcrubprice</span></a><a href="/crypto-prices-live/zh/ton-usdt/"><strong>TON/USDT</strong><span>1.3760 · @tonusdprice</span></a><a href="/crypto-prices-live/zh/usd-rub/"><strong>USD/RUB</strong><span>74.847 · @usdrubprice</span></a></div>
 
   <h2>常见问题</h2>
   <h3>价格多久更新一次？</h3>

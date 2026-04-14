@@ -23,6 +23,8 @@
 <meta property="og:type" content="website"/>
 <meta name="twitter:card" content="summary"/>
 <meta name="theme-color" content="#0b1220"/>
+<meta name="yandex-verification" content="1edba899112310f3"/>
+<meta name="google-site-verification" content="OI8q2vN1dp3ChHueOuCCzlqUxtmBmFcApUMo30wDKno"/>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "ExchangeRateSpecification", "currency": "WLD", "currentExchangeRate": {"@type": "UnitPriceSpecification", "price": 0.2957, "priceCurrency": "USDT"}, "name": "WLD/USDT live exchange rate", "url": "https://planetapokera.github.io/crypto-prices-live/ru/wld-usdt/kurs-wld-telegram/"}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Как часто обновляется цена?", "acceptedAnswer": {"@type": "Answer", "text": "В канале @wldusdprice — каждую минуту. На этой странице — раз в час (GitHub Actions). Если нужен реалтайм — Telegram-канал."}}, {"@type": "Question", "name": "Откуда берётся цена?", "acceptedAnswer": {"@type": "Answer", "text": "Источник: Binance spot."}}, {"@type": "Question", "name": "Это бесплатно?", "acceptedAnswer": {"@type": "Answer", "text": "Да, подписка на Telegram-канал и доступ к странице бесплатны."}}, {"@type": "Question", "name": "Есть ли уведомления?", "acceptedAnswer": {"@type": "Answer", "text": "Посты идут беззвучно — открываете канал и видите актуальную цену."}}]}</script>
 <style>
@@ -54,6 +56,14 @@ p{color:#c9d4e9}
 ul{color:#c9d4e9}
 footer{margin-top:50px;padding-top:24px;border-top:1px solid #243356;color:var(--muted);font-size:13px}
 footer a{color:var(--muted)}
+.calc{background:var(--card);border:1px solid #243356;border-radius:12px;padding:18px;margin:20px 0}
+.calc .row{display:flex;gap:8px;align-items:stretch;margin:8px 0;flex-wrap:wrap}
+.calc input{flex:1;min-width:140px;background:#0b1220;border:1px solid #243356;color:var(--fg);padding:10px 12px;border-radius:8px;font-size:16px;font-family:inherit}
+.calc input:focus{outline:none;border-color:var(--accent)}
+.calc .ccy{min-width:70px;padding:10px 12px;background:#0b1220;border:1px solid #243356;border-radius:8px;color:var(--muted);font-weight:600;display:flex;align-items:center;justify-content:center}
+.calc button{background:transparent;border:1px solid #243356;color:var(--muted);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px}
+.calc button:hover{border-color:var(--accent);color:var(--fg)}
+.calc .rate{color:var(--muted);font-size:13px;margin-top:10px}
 [dir="rtl"] .grid strong,[dir="rtl"] .price small{direction:rtl}
 </style>
 </head>
@@ -71,16 +81,65 @@ footer a{color:var(--muted)}
   <div class="price-card">
     <div class="meta">WLD/USDT · Источник: Binance spot</div>
     <div class="price">0.295700 <small>USDT</small></div>
-    <div class="meta">Снимок на 2026-04-14 20:54 UTC · обновляется раз в час через GitHub Actions</div>
+    <div class="meta">Снимок на 2026-04-14 20:56 UTC · обновляется раз в час через GitHub Actions</div>
     <a class="cta" href="https://t.me/wldusdprice">Смотреть курс каждую минуту → @wldusdprice</a>
   </div>
+
+  <h2>Конвертер WLD/USDT</h2>
+  <div class="calc" data-rate="0.2957" data-base="WLD" data-quote="USDT">
+    <div class="row">
+      <input type="number" inputmode="decimal" step="any" class="calc-from" value="1" aria-label="Сколько"/>
+      <div class="ccy">WLD</div>
+    </div>
+    <div class="row">
+      <input type="number" inputmode="decimal" step="any" class="calc-to" aria-label="Получится"/>
+      <div class="ccy">USDT</div>
+      <button type="button" class="calc-swap">⇅ Поменять</button>
+    </div>
+    <div class="rate">По курсу 1 WLD = 0.295700 USDT</div>
+  </div>
+  <script>
+  (function(){
+    document.querySelectorAll('.calc').forEach(function(root){
+      if(root._init) return; root._init = true;
+      var rate = parseFloat(root.dataset.rate) || 0;
+      var base = root.dataset.base, quote = root.dataset.quote;
+      var fromEl = root.querySelector('.calc-from');
+      var toEl   = root.querySelector('.calc-to');
+      var ccyFrom = root.querySelectorAll('.ccy')[0];
+      var ccyTo   = root.querySelectorAll('.ccy')[1];
+      var swapBtn = root.querySelector('.calc-swap');
+      var inverted = false;
+      function fmt(n){
+        if(!isFinite(n)) return '';
+        if(Math.abs(n)>=1000) return n.toLocaleString('en-US',{maximumFractionDigits:2}).replace(/,/g,' ');
+        if(Math.abs(n)>=1)    return n.toLocaleString('en-US',{maximumFractionDigits:4});
+        return n.toLocaleString('en-US',{maximumFractionDigits:8});
+      }
+      function recalc(src){
+        var r = inverted ? (rate>0?1/rate:0) : rate;
+        if(src==='to'){ var v=parseFloat(toEl.value); fromEl.value = fmt(v/(r||1)); }
+        else           { var v=parseFloat(fromEl.value); toEl.value = fmt(v*r); }
+      }
+      fromEl.addEventListener('input', function(){recalc('from');});
+      toEl.addEventListener('input',   function(){recalc('to');});
+      swapBtn.addEventListener('click', function(){
+        inverted = !inverted;
+        ccyFrom.textContent = inverted ? quote : base;
+        ccyTo.textContent   = inverted ? base  : quote;
+        recalc('from');
+      });
+      recalc('from');
+    });
+  })();
+  </script>
 
   <h2>WLD (Worldcoin) — токен проекта World ID</h2>
   <p>Worldcoin — проект Сэма Альтмана, выпускающий WLD людям, прошедшим биометрическую верификацию через устройство Orb. Цель — подтверждение уникальности человека в мире AI-ботов.</p>
   <p>Цена WLD/USDT собирается со спот-рынка Binance — основной ликвидной биржи по Worldcoin.</p>
 
   <h2>Курсы в других парах</h2>
-  <div class="grid"><a href="/crypto-prices-live/ru/btc-usdt/"><strong>BTC/USDT</strong><span>74 141.58 · @btcusdtpriced</span></a><a href="/crypto-prices-live/ru/btc-usd/"><strong>BTC/USD</strong><span>74 201.01 · @btcusdprice</span></a><a href="/crypto-prices-live/ru/btc-rub/"><strong>BTC/RUB</strong><span>5 549 311.91 · @btcrubprice</span></a><a href="/crypto-prices-live/ru/ton-usdt/"><strong>TON/USDT</strong><span>1.3760 · @tonusdprice</span></a><a href="/crypto-prices-live/ru/usd-rub/"><strong>USD/RUB</strong><span>74.847 · @usdrubprice</span></a></div>
+  <div class="grid"><a href="/crypto-prices-live/ru/btc-usdt/"><strong>BTC/USDT</strong><span>74 151.77 · @btcusdtpriced</span></a><a href="/crypto-prices-live/ru/btc-usd/"><strong>BTC/USD</strong><span>74 201.93 · @btcusdprice</span></a><a href="/crypto-prices-live/ru/btc-rub/"><strong>BTC/RUB</strong><span>5 550 074.61 · @btcrubprice</span></a><a href="/crypto-prices-live/ru/ton-usdt/"><strong>TON/USDT</strong><span>1.3760 · @tonusdprice</span></a><a href="/crypto-prices-live/ru/usd-rub/"><strong>USD/RUB</strong><span>74.847 · @usdrubprice</span></a></div>
 
   <h2>Часто задаваемые вопросы</h2>
   <h3>Как часто обновляется цена?</h3>

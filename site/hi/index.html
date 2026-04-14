@@ -18,6 +18,8 @@
 <link rel="alternate" hreflang="x-default" href="https://planetapokera.github.io/crypto-prices-live/"/>
 <meta property="og:title" content="Crypto Prices Live — Telegram पर हर मिनट क्रिप्टो और फ़ॉरेक्स भाव"/>
 <meta property="og:description" content="6 Telegram चैनलों का नेटवर्क, हर मिनट कीमतें: BTC/USDT, BTC/USD, BTC/RUB, TON/USDT, WLD/USDT, USD/RUB। स्रोत: Binance, Coinbase, MOEX।"/>
+<meta name="yandex-verification" content="1edba899112310f3"/>
+<meta name="google-site-verification" content="OI8q2vN1dp3ChHueOuCCzlqUxtmBmFcApUMo30wDKno"/>
 <style>
 :root{--bg:#0b1220;--fg:#e8eef9;--muted:#8fa3c2;--accent:#3ecf8e;--card:#141c32}
 *{box-sizing:border-box}
@@ -47,6 +49,14 @@ p{color:#c9d4e9}
 ul{color:#c9d4e9}
 footer{margin-top:50px;padding-top:24px;border-top:1px solid #243356;color:var(--muted);font-size:13px}
 footer a{color:var(--muted)}
+.calc{background:var(--card);border:1px solid #243356;border-radius:12px;padding:18px;margin:20px 0}
+.calc .row{display:flex;gap:8px;align-items:stretch;margin:8px 0;flex-wrap:wrap}
+.calc input{flex:1;min-width:140px;background:#0b1220;border:1px solid #243356;color:var(--fg);padding:10px 12px;border-radius:8px;font-size:16px;font-family:inherit}
+.calc input:focus{outline:none;border-color:var(--accent)}
+.calc .ccy{min-width:70px;padding:10px 12px;background:#0b1220;border:1px solid #243356;border-radius:8px;color:var(--muted);font-weight:600;display:flex;align-items:center;justify-content:center}
+.calc button{background:transparent;border:1px solid #243356;color:var(--muted);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px}
+.calc button:hover{border-color:var(--accent);color:var(--fg)}
+.calc .rate{color:var(--muted);font-size:13px;margin-top:10px}
 [dir="rtl"] .grid strong,[dir="rtl"] .price small{direction:rtl}
 </style>
 </head>
@@ -58,8 +68,8 @@ footer a{color:var(--muted)}
   </header>
   <div class="lang-nav"><a href="/crypto-prices-live/ru/" class="" hreflang="ru">Русский</a><a href="/crypto-prices-live/en/" class="" hreflang="en">English</a><a href="/crypto-prices-live/es/" class="" hreflang="es">Español</a><a href="/crypto-prices-live/tr/" class="" hreflang="tr">Türkçe</a><a href="/crypto-prices-live/pt/" class="" hreflang="pt-BR">Português</a><a href="/crypto-prices-live/id/" class="" hreflang="id">Indonesia</a><a href="/crypto-prices-live/hi/" class="active" hreflang="hi">हिन्दी</a><a href="/crypto-prices-live/ar/" class="" hreflang="ar">العربية</a><a href="/crypto-prices-live/zh/" class="" hreflang="zh-CN">中文</a></div>
   <h1>Telegram पर हर मिनट क्रिप्टो और फ़ॉरेक्स भाव</h1>
-  <p>छह स्वतंत्र चैनल। हर चैनल अपनी जोड़ी मिनट में एक बार पोस्ट करता है। स्रोत: Binance spot, Coinbase, Moscow Exchange। Snapshot: 2026-04-14 20:54 UTC.</p>
-  <div class="grid"><a href="/crypto-prices-live/hi/btc-usdt/"><strong>BTC/USDT</strong><span>74 141.58 USDT · @btcusdtpriced</span></a><a href="/crypto-prices-live/hi/btc-usd/"><strong>BTC/USD</strong><span>74 201.01 USD · @btcusdprice</span></a><a href="/crypto-prices-live/hi/btc-rub/"><strong>BTC/RUB</strong><span>5 549 311.91 RUB · @btcrubprice</span></a><a href="/crypto-prices-live/hi/ton-usdt/"><strong>TON/USDT</strong><span>1.3760 USDT · @tonusdprice</span></a><a href="/crypto-prices-live/hi/wld-usdt/"><strong>WLD/USDT</strong><span>0.295700 USDT · @wldusdprice</span></a><a href="/crypto-prices-live/hi/usd-rub/"><strong>USD/RUB</strong><span>74.847 RUB · @usdrubprice</span></a></div>
+  <p>छह स्वतंत्र चैनल। हर चैनल अपनी जोड़ी मिनट में एक बार पोस्ट करता है। स्रोत: Binance spot, Coinbase, Moscow Exchange। Snapshot: 2026-04-14 20:56 UTC.</p>
+  <div class="grid"><a href="/crypto-prices-live/hi/btc-usdt/"><strong>BTC/USDT</strong><span>74 151.77 USDT · @btcusdtpriced</span></a><a href="/crypto-prices-live/hi/btc-usd/"><strong>BTC/USD</strong><span>74 201.93 USD · @btcusdprice</span></a><a href="/crypto-prices-live/hi/btc-rub/"><strong>BTC/RUB</strong><span>5 550 074.61 RUB · @btcrubprice</span></a><a href="/crypto-prices-live/hi/ton-usdt/"><strong>TON/USDT</strong><span>1.3760 USDT · @tonusdprice</span></a><a href="/crypto-prices-live/hi/wld-usdt/"><strong>WLD/USDT</strong><span>0.295700 USDT · @wldusdprice</span></a><a href="/crypto-prices-live/hi/usd-rub/"><strong>USD/RUB</strong><span>74.847 RUB · @usdrubprice</span></a></div>
   <h2>कैसे काम करता है</h2>
   <ul><li>हर चैनल का अपना टिकर बॉट है।</li><li>कीमतें सीधे एक्सचेंज API से आती हैं (Binance, Coinbase, MOEX)।</li><li>हर 60 सेकंड में साइलेंट पोस्ट (पुश नहीं)।</li><li>चैनल की पोस्ट्स स्क्रॉल करके आप प्राइस हिस्ट्री देख सकते हैं।</li></ul>
   <footer>ओपन सोर्स कोड <a href="https://github.com/planetapokera/crypto-prices-live">GitHub</a>. कीमतें सूचनात्मक हैं और वित्तीय सलाह नहीं हैं।</footer>
