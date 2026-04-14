@@ -160,20 +160,30 @@ VERIFY_META = (
 # ---------- templates ----------
 
 def lang_nav_html(lang_slug: str, current_path: str) -> str:
-    """current_path: canonical path inside site minus leading '/', no trailing slash.
-    For each supported language emit a link to same page under that language.
+    """For each supported language emit a link to the closest equivalent URL.
+
+    Keyword slugs differ between languages, so when switching from a keyword page
+    we route the other language to its pair-index (same pair, no keyword) to
+    avoid 404s. Homepages and pair-indexes map 1:1.
     """
+    parts = [p for p in current_path.split("/") if p]
     out = []
     for lg in LANGS:
-        # Compute counterpart URL in other lang.
-        # current_path looks like "<lang>/<pair>/<kw>/" or "<lang>/" or "<lang>/<pair>/"
-        # Replace the <lang> prefix with lg.
-        parts = [p for p in current_path.split("/") if p]
         if not parts:
             href = f"/crypto-prices-live/{lg}/"
+        elif len(parts) == 1:
+            # /<lang>/ → /<lg>/
+            href = f"/crypto-prices-live/{lg}/"
+        elif len(parts) == 2:
+            # /<lang>/<pair>/ → /<lg>/<pair>/ (pair slugs are language-neutral)
+            href = f"/crypto-prices-live/{lg}/{parts[1]}/"
         else:
-            parts[0] = lg
-            href = "/crypto-prices-live/" + "/".join(parts) + "/"
+            # /<lang>/<pair>/<kw>/ → /<lg>/<pair>/  (kw is language-specific; if
+            # target == current lang keep the exact URL, otherwise drop the kw)
+            if lg == lang_slug:
+                href = "/crypto-prices-live/" + "/".join([lg] + parts[1:]) + "/"
+            else:
+                href = f"/crypto-prices-live/{lg}/{parts[1]}/"
         cls = "active" if lg == lang_slug else ""
         out.append(f'<a href="{href}" class="{cls}" hreflang="{LANG_META[lg]["html_lang"]}">{LANG_META[lg]["name"]}</a>')
     return '<div class="lang-nav">' + "".join(out) + "</div>"
@@ -283,8 +293,29 @@ def page_html(lang: str, pair: Pair, kw_slug: str, kw: str,
         ],
     }
 
+    # BreadcrumbList for rich results
+    json_ld_bc = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home",
+             "item": f"{DOMAIN}/{lang}/"},
+            {"@type": "ListItem", "position": 2, "name": pair.label,
+             "item": f"{DOMAIN}/{lang}/{pair.slug}/"},
+            {"@type": "ListItem", "position": 3, "name": kw,
+             "item": canonical},
+        ],
+    }
+    # Related-keywords internal links (all sibling keywords of same pair + lang, excl. current)
+    all_kws = KEYWORDS[lang][pair.slug]
+    related_items = [
+        f'<a href="/crypto-prices-live/{lang}/{pair.slug}/{sl}/"><strong>{kw2}</strong>'
+        f'<span>{pair.label} · {pair.channel}</span></a>'
+        for sl, kw2 in all_kws if sl != kw_slug
+    ]
+    related_kw_block = '<div class="grid">' + "".join(related_items) + '</div>'
     title = f"{kw} — {pair.label} | {pair.channel}"
-    description = ui["live_line"].format(label=pair.label, source=pair.source, channel=pair.channel)
+    description = kw + " — " + ui["live_line"].format(label=pair.label, source=pair.source, channel=pair.channel)
     ctx_h2, ctx_p1, ctx_p2 = CONTEXT[lang][pair.slug]
     cross = cross_grid(lang, pair.slug, prices)
     lang_nav = lang_nav_html(lang, f"{lang}/{pair.slug}/{kw_slug}/")
@@ -309,6 +340,7 @@ def page_html(lang: str, pair: Pair, kw_slug: str, kw: str,
 {VERIFY_META}
 <script type="application/ld+json">{json.dumps(json_ld_rate, ensure_ascii=False)}</script>
 <script type="application/ld+json">{json.dumps(json_ld_faq, ensure_ascii=False)}</script>
+<script type="application/ld+json">{json.dumps(json_ld_bc, ensure_ascii=False)}</script>
 <style>{BASE_CSS}</style>
 </head>
 <body>
@@ -384,6 +416,9 @@ def page_html(lang: str, pair: Pair, kw_slug: str, kw: str,
 
   <h2>{ui['other_pairs']}</h2>
   {cross}
+
+  <h2>{ui['related_kw']}</h2>
+  {related_kw_block}
 
   <h2>{ui['faq']}</h2>
   <h3>{ui['q_freq']}</h3>
