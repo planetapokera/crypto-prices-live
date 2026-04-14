@@ -583,6 +583,36 @@ def main() -> None:
 
     key = "c9f1a8b7d6e5c4b3a2918273645f0e9d"
     (SITE / f"{key}.txt").write_text(key, encoding="utf-8")
+    # Custom 404 with JS redirect: /<lang>/<pair>/<bad-slug>/ → /<lang>/<pair>/
+    (SITE / "404.html").write_text(
+        """<!doctype html>
+<html lang=\"en\">
+<head>
+<meta charset=\"utf-8\"/>
+<title>404 — redirecting</title>
+<meta name=\"robots\" content=\"noindex\"/>
+<script>
+(function(){
+  var path = location.pathname;
+  var m = path.match(/^\/crypto-prices-live\/([a-z]{2})\/([a-z0-9-]+)\//);
+  if (m) {
+    var safe = '/crypto-prices-live/' + m[1] + '/' + m[2] + '/';
+    if (safe !== path) { location.replace(safe); return; }
+  }
+  var m2 = path.match(/^\/crypto-prices-live\/([a-z]{2})\//);
+  if (m2) { location.replace('/crypto-prices-live/' + m2[1] + '/'); return; }
+  location.replace('/crypto-prices-live/');
+})();
+</script>
+</head>
+<body>
+<p>Page not found. Redirecting to <a href=\"/crypto-prices-live/\">home</a>…</p>
+</body>
+</html>
+""",
+        encoding="utf-8",
+    )
+
 
     total = sum(1 for _ in SITE.rglob("*.html"))
     print(f"Built {total} HTML pages, {len(urls)} URLs in sitemap.")
