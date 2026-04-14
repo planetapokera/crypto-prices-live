@@ -152,7 +152,7 @@ footer a{color:var(--muted)}
 """
 
 VERIFY_META = (
-    '<meta name="yandex-verification" content="1edba899112310f3"/>\n'
+    '<meta name="yandex-verification" content="e5ad8235e1498a27"/>\n'
     '<meta name="google-site-verification" content="OI8q2vN1dp3ChHueOuCCzlqUxtmBmFcApUMo30wDKno"/>'
 )
 
